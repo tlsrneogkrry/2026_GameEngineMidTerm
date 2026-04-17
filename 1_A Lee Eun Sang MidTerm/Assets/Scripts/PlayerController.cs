@@ -1,6 +1,8 @@
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,26 +13,53 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
 
     private Rigidbody2D rb;
+    private Animator pAni;
+    private Animator run;
     private bool isGrounded;
     private float moveInput;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        run = GetComponent<Animator>();
+        run.SetBool("Move", false);
     }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-
+        pAni = GetComponent<Animator>();
     }
 
 
-    private void Update()
+    void Update()
     {
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
+        if (moveInput > 0)
+        {
+            transform.localScale = new Vector3(0.12f, 0.12f, 1);
+        }
+        else if (moveInput < 0)
+        {
+            transform.localScale = new Vector3(-0.12f, 0.12f, 1);
+        }
+
+        if (moveInput > 0)
+        {
+            run.SetBool("Move", true);
+        }
+        else if (moveInput < 0)
+        {
+            run.SetBool("Move", true);
+        }
+        else if (moveInput == 0)
+        {
+            run.SetBool("Move", false);
+        }
+
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        pAni.SetBool("Jump", !isGrounded);
     }
 
 
@@ -38,35 +67,8 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 input = value.Get<Vector2>();
         moveInput = input.x;
-
-        if (moveInput == 0)
-        {
-            GetComponent<Animator>().SetBool("IsMove", false);
-        }
-        else if (moveInput < 0)
-        {
-            GetComponent<Animator>().SetBool("IsMove", true);
-            GetComponent<SpriteRenderer>().flipX = true;
-        }
-        else if (moveInput > 0)
-        {
-            GetComponent<Animator>().SetBool("IsMove", true);
-            GetComponent<SpriteRenderer>().flipX = false;
-        }
     }
 
-    private void FixedUpdate()
-    {
-        if (rb.linearVelocityY > 0)
-        {
-            GetComponent<Animator>().SetBool("IsUp", true);
-
-        }
-        else if (rb.linearVelocityY < 0)
-        {
-            GetComponent<Animator>().SetBool("IsUp", false);
-        }
-    }
 
     public void OnJump(InputValue value)
     {
@@ -74,27 +76,22 @@ public class PlayerController : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            isGrounded = false;
-            GetComponent<Animator>().SetBool("OnAir", !isGrounded);
         }
+
+        run.SetBool("Move", Mathf.Abs(moveInput) > 0.1f && isGrounded);
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        isGrounded = true;
-        GetComponent<Animator>().SetBool("OnAir", !isGrounded);
+        if (collision.CompareTag("Respawn"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        else if (collision.CompareTag("Goal"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
     }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        isGrounded = true;
-        GetComponent<Animator>().SetTrigger("Land");
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        isGrounded = false;
-        GetComponent<Animator>().SetBool("OnAir", !isGrounded);
-    }
-    
 }
 
 
