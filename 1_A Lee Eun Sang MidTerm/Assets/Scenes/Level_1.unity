@@ -26205,11 +26205,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1493624955787382962, guid: efb5dddddf02c6b4687c1483cc4a26eb, type: 3}
       propertyPath: m_Name
-      value: Goal
-      objectReference: {fileID: 0}
-    - target: {fileID: 1493624955787382962, guid: efb5dddddf02c6b4687c1483cc4a26eb, type: 3}
-      propertyPath: m_TagString
-      value: Goal
+      value: Goal 2
       objectReference: {fileID: 0}
     - target: {fileID: 6565196533931959592, guid: efb5dddddf02c6b4687c1483cc4a26eb, type: 3}
       propertyPath: m_Pivot.x
