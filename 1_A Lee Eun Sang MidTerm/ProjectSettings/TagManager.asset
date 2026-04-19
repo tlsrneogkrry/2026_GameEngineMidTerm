@@ -7,6 +7,9 @@ TagManager:
   - Goal
   - Item
   - Enemy
+  - Boundary
+  - Speed Item
+  - Obstacle
   layers:
   - Default
   - TransparentFX

@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
 {
 
     public float moveSpeed = 5f;
+    private float originalSpeed;
     public float jumpForce = 5f;
     public Transform groundCheck;
     public LayerMask groundLayer;
@@ -25,6 +26,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         run = GetComponent<Animator>();
         run.SetBool("Move", false);
+
+        originalSpeed = moveSpeed;
     }
 
     private void Awake()
@@ -105,13 +108,13 @@ public class PlayerController : MonoBehaviour
         {
             if (!isGiant)
             {
-               SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
-            
+
         }
         else if (collision.CompareTag("Goal"))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            collision.GetComponent<LevelObject>().MoveToNextLevel();
         }
 
         if (collision.CompareTag("Enemy"))
@@ -132,8 +135,19 @@ public class PlayerController : MonoBehaviour
             Invoke(nameof(ResetGiant), 5f);
             Destroy(collision.gameObject);
         }
+
+        if (collision.CompareTag("Speed Item"))
+        {
+            moveSpeed *= 1.5f;
+            Invoke(nameof(ResetSpeed), 3f);
+            Destroy(collision.gameObject);
+        }
     }
 
+    void ResetSpeed()
+    {
+        moveSpeed = originalSpeed;
+    }
     void ResetGiant()
     {
         isGiant = false;
