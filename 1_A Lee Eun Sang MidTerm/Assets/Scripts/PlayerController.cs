@@ -149,7 +149,19 @@ public class PlayerController : MonoBehaviour
         {
             jumpForce = originalJumpForce * 1.5f;
             CancelInvoke(nameof(ResetJump));
-            Invoke(nameof(ResetJump), 10f);
+            Invoke(nameof(ResetJump), 5f);
+
+            Destroy(collision.gameObject);
+        }
+
+        if (collision.CompareTag("EnemyDestroy"))
+        {
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+            foreach (GameObject enemy in enemies)
+            {
+                Destroy(enemy);
+            }
 
             Destroy(collision.gameObject);
         }
