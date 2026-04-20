@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     private float originalSpeed;
     public float jumpForce = 5f;
+    private float originalJumpForce;
     public Transform groundCheck;
     public LayerMask groundLayer;
 
@@ -28,6 +29,7 @@ public class PlayerController : MonoBehaviour
         run.SetBool("Move", false);
 
         originalSpeed = moveSpeed;
+        originalJumpForce = jumpForce;
     }
 
     private void Awake()
@@ -139,7 +141,16 @@ public class PlayerController : MonoBehaviour
         if (collision.CompareTag("Speed Item"))
         {
             moveSpeed *= 1.5f;
-            Invoke(nameof(ResetSpeed), 3f);
+            Invoke(nameof(ResetSpeed), 5f);
+            Destroy(collision.gameObject);
+        }
+
+        if (collision.CompareTag("Jump Item"))
+        {
+            jumpForce = originalJumpForce * 1.5f;
+            CancelInvoke(nameof(ResetJump));
+            Invoke(nameof(ResetJump), 10f);
+
             Destroy(collision.gameObject);
         }
     }
@@ -151,6 +162,11 @@ public class PlayerController : MonoBehaviour
     void ResetGiant()
     {
         isGiant = false;
+    }
+
+    void ResetJump()
+    {
+        jumpForce = originalJumpForce;
     }
 }
 

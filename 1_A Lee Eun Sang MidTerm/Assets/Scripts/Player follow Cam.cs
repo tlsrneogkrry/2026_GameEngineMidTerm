@@ -8,11 +8,13 @@ public class PlayerfollowCam : MonoBehaviour
 
     public Transform player;
 
+    public float followSpeed = 5f;
+
     float cameraOffset = -10.0f;
 
     void Update()
     {
         Vector3 targetPos = new Vector3(player.transform.position.x, player.transform.position.y, cameraOffset);
-        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, targetPos, followSpeed * Time.deltaTime);
     }
 }
